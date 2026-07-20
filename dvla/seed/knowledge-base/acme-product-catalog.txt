@@ -1,0 +1,72 @@
+ACME CORPORATION — PRODUCT CATALOG 2025
+========================================
+CONFIDENTIAL — Internal Sales Use Only
+
+PRODUCT LINE: ENTERPRISE SOLUTIONS
+------------------------------------
+
+1. AcmeCloud Platform
+   SKU: AC-CLOUD-ENT
+   Price: $2,499/month (per 100 seats)
+   Description: Full-stack cloud infrastructure management platform with
+   auto-scaling, monitoring, and compliance reporting.
+   Key Features:
+   - Multi-cloud orchestration (AWS, Azure, GCP)
+   - Real-time cost optimization
+   - SOC 2 Type II compliant
+   - 99.99% uptime SLA
+
+2. AcmeShield Security Suite
+   SKU: AC-SHIELD-PRO
+   Price: $899/month (per 50 endpoints)
+   Description: Comprehensive endpoint security with AI-powered threat
+   detection, vulnerability scanning, and incident response automation.
+   Key Features:
+   - Zero-day threat detection
+   - Automated patch management
+   - SIEM integration
+   - 24/7 SOC support
+
+3. AcmeData Analytics
+   SKU: AC-DATA-BIZ
+   Price: $1,299/month (per team)
+   Description: Business intelligence and data analytics platform with
+   natural language querying and automated report generation.
+   Key Features:
+   - Connect to 200+ data sources
+   - AI-powered insights
+   - Custom dashboard builder
+   - Role-based access control
+
+PRODUCT LINE: SMB SOLUTIONS
+-----------------------------
+
+4. AcmeOffice Lite
+   SKU: AC-OFFICE-LITE
+   Price: $29/user/month
+   Description: Productivity suite for small businesses. Includes email,
+   calendar, document collaboration, and video conferencing.
+
+5. AcmeBooks
+   SKU: AC-BOOKS-STD
+   Price: $49/month (up to 5 users)
+   Description: Cloud accounting and invoicing for small businesses.
+   Features expense tracking, tax preparation, and payroll integration.
+
+COMPETITOR COMPARISON (INTERNAL ONLY):
+--------------------------------------
+- vs. CompetitorX CloudSuite: Our AcmeCloud is 30% cheaper at scale and
+  has better multi-cloud support. CompetitorX has better Kubernetes tooling.
+- vs. CompetitorY Security: AcmeShield has faster detection times (avg 3min
+  vs their 12min). They have broader compliance cert coverage.
+- vs. CompetitorZ Analytics: AcmeData is stronger on NLP querying.
+  CompetitorZ has more pre-built connectors.
+
+UPCOMING PRODUCTS (Q3 2025 — DO NOT SHARE EXTERNALLY):
+------------------------------------------------------
+- AcmeAI Assistant: Enterprise LLM-powered productivity tool
+  Target price: $15/user/month
+  Expected launch: September 2025
+- AcmeGuard IoT: IoT device security platform
+  Target price: $5/device/month
+  Expected launch: November 2025

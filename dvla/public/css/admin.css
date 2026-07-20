@@ -1,0 +1,417 @@
+/* ═══════════════════════════════════════════════════════════
+   Admin Panel & Logs Modal Styles
+   ═══════════════════════════════════════════════════════════ */
+
+/* ─── Admin Modal ────────────────────────────────────────── */
+.admin-modal-content {
+  width: 680px;
+  max-width: 95vw;
+}
+
+.admin-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-elevated);
+}
+
+.admin-tab {
+  padding: var(--space-md) var(--space-lg);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-muted);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.admin-tab:hover {
+  color: var(--text-secondary);
+  background: var(--bg-hover);
+}
+
+.admin-tab.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+.admin-tab-content {
+  display: none;
+  padding: var(--space-lg);
+}
+
+.admin-tab-content.active {
+  display: block;
+}
+
+.admin-section {
+  margin-bottom: var(--space-xl);
+}
+
+.admin-section h3 {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: var(--space-md);
+  color: var(--text-primary);
+}
+
+.admin-section label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-sm);
+}
+
+.admin-textarea {
+  width: 100%;
+  min-height: 200px;
+  padding: var(--space-md);
+  background: var(--bg-deepest);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  resize: vertical;
+  outline: none;
+  transition: border-color var(--transition-fast);
+}
+
+.admin-textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-glow);
+}
+
+.admin-actions {
+  display: flex;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+}
+
+.admin-note {
+  font-size: 13px;
+  color: var(--text-secondary);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--accent-bg);
+  border: 1px solid var(--accent-border);
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--space-md);
+  line-height: 1.5;
+}
+
+/* ─── Upload Area ────────────────────────────────────────── */
+.upload-area {
+  border: 2px dashed var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-xl);
+  text-align: center;
+  transition: all var(--transition-fast);
+  cursor: pointer;
+}
+
+.upload-area:hover,
+.upload-area.dragover {
+  border-color: var(--accent);
+  background: var(--accent-bg);
+}
+
+.upload-area p {
+  color: var(--text-secondary);
+  font-size: 14px;
+  margin-bottom: var(--space-xs);
+}
+
+.upload-hint {
+  font-size: 12px !important;
+  color: var(--text-muted) !important;
+}
+
+.upload-warning {
+  margin-top: var(--space-sm) !important;
+  font-size: 12px !important;
+  color: var(--vuln-primary) !important;
+  padding: var(--space-xs) var(--space-sm);
+  background: var(--vuln-bg);
+  border-radius: var(--radius-sm);
+  display: inline-block;
+}
+
+body.mode-hardened .upload-warning {
+  display: none;
+}
+
+.upload-status {
+  margin-top: var(--space-md);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+}
+
+.upload-status.success {
+  background: rgba(0, 214, 143, 0.1);
+  color: var(--success);
+  border: 1px solid rgba(0, 214, 143, 0.2);
+}
+
+.upload-status.error {
+  background: rgba(255, 68, 68, 0.1);
+  color: var(--error);
+  border: 1px solid rgba(255, 68, 68, 0.2);
+}
+
+/* ─── Document List ──────────────────────────────────────── */
+.document-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.document-card {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: var(--space-md);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  gap: var(--space-md);
+}
+
+.document-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.document-name {
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--text-primary);
+  margin-bottom: var(--space-xs);
+  word-break: break-word;
+}
+
+.document-preview {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.document-meta {
+  display: flex;
+  gap: var(--space-sm);
+  margin-top: var(--space-xs);
+  font-size: 11px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+.document-status {
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.document-status.indexed {
+  background: rgba(0, 214, 143, 0.1);
+  color: var(--success);
+}
+
+.document-status.pending {
+  background: rgba(255, 170, 0, 0.1);
+  color: var(--warning);
+}
+
+.document-status.rejected {
+  background: rgba(255, 68, 68, 0.1);
+  color: var(--error);
+}
+
+.document-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  flex-shrink: 0;
+}
+
+/* ─── Tools List ─────────────────────────────────────────── */
+.tools-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.tool-card {
+  padding: var(--space-md);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.tool-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.tool-info {
+  flex: 1;
+}
+
+.tool-name {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--text-primary);
+}
+
+.tool-description {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.tool-badge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+}
+
+.tool-badge.no-confirm {
+  background: rgba(255, 68, 68, 0.1);
+  color: var(--error);
+  border: 1px solid rgba(255, 68, 68, 0.2);
+}
+
+.tool-badge.requires-confirm {
+  background: rgba(0, 214, 143, 0.1);
+  color: var(--success);
+  border: 1px solid rgba(0, 214, 143, 0.2);
+}
+
+/* ─── Logs Modal ─────────────────────────────────────────── */
+.logs-modal-content {
+  width: 850px;
+  max-width: 95vw;
+}
+
+.logs-toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-elevated);
+}
+
+.logs-filter {
+  padding: var(--space-xs) var(--space-sm);
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 12px;
+  outline: none;
+}
+
+.logs-table-container {
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.logs-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.logs-table th {
+  position: sticky;
+  top: 0;
+  background: var(--bg-surface);
+  padding: var(--space-sm) var(--space-md);
+  text-align: left;
+  font-weight: 600;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.logs-table td {
+  padding: var(--space-sm) var(--space-md);
+  border-bottom: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.logs-table tr:hover td {
+  background: var(--bg-hover);
+}
+
+.event-badge {
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  font-size: 10px;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+}
+
+.event-badge.attempt {
+  background: rgba(255, 170, 0, 0.1);
+  color: var(--warning);
+}
+
+.event-badge.success {
+  background: rgba(255, 68, 68, 0.1);
+  color: var(--error);
+}
+
+.event-badge.blocked {
+  background: rgba(0, 214, 143, 0.1);
+  color: var(--success);
+}
+
+/* ─── Tool Confirm Modal ─────────────────────────────────── */
+.tool-confirm-content {
+  width: 500px;
+}
+
+.tool-confirm-body {
+  padding: var(--space-lg);
+}
+
+.tool-confirm-body p {
+  color: var(--text-secondary);
+  margin-bottom: var(--space-md);
+}
+
+.tool-confirm-details {
+  background: var(--bg-deepest);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-md);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--text-primary);
+  white-space: pre-wrap;
+}

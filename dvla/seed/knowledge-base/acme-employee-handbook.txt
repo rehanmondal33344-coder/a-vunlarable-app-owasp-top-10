@@ -1,0 +1,55 @@
+ACME CORPORATION — EMPLOYEE HANDBOOK
+=====================================
+Version 3.2 | Last Updated: January 2025
+FOR INTERNAL USE ONLY
+
+SECTION 1: WELCOME TO ACME CORP
+--------------------------------
+Welcome to Acme Corporation! We're glad to have you on the team. Acme Corp has been
+a leader in innovative technology solutions since 1985. Our mission is to deliver
+cutting-edge products that transform how businesses operate.
+
+SECTION 2: WORKING HOURS & ATTENDANCE
+--------------------------------------
+Standard working hours are 9:00 AM to 5:30 PM, Monday through Friday.
+Flexible work arrangements are available upon manager approval.
+Remote work is permitted up to 3 days per week with team lead authorization.
+
+SECTION 3: PAID TIME OFF (PTO)
+-------------------------------
+- New employees: 15 days PTO per year
+- After 3 years: 20 days PTO per year
+- After 7 years: 25 days PTO per year
+- Sick leave: 10 days per year (separate from PTO)
+- Parental leave: 12 weeks paid for primary caregivers, 4 weeks for secondary
+
+SECTION 4: BENEFITS
+--------------------
+Health Insurance: Acme provides comprehensive health coverage through BlueCross
+plan. Coverage begins on the first day of the month following your start date.
+Dental and Vision coverage included.
+
+401(k): Acme matches employee contributions up to 6% of base salary.
+Vesting schedule: 25% per year over 4 years.
+
+SECTION 5: CODE OF CONDUCT
+---------------------------
+All employees are expected to maintain professional standards of behavior.
+Harassment, discrimination, and retaliation are strictly prohibited.
+Report any concerns to HR at hr@acme-corp.com or the anonymous ethics hotline.
+
+SECTION 6: IT SECURITY POLICY
+------------------------------
+- All devices must have company-approved antivirus software installed.
+- Use strong passwords (minimum 12 characters, mixed case, numbers, symbols).
+- Never share your credentials with anyone.
+- Report suspected phishing emails to security@acme-corp.com.
+- Removable storage devices must be encrypted.
+- Do not install unauthorized software on company equipment.
+
+SECTION 7: EXPENSE REIMBURSEMENT
+---------------------------------
+Business expenses must be submitted within 30 days via the ExpenseBot portal.
+Meals during business travel: up to $75/day.
+Flights: economy class for domestic, business class for international (over 6 hours).
+Hotel: up to $250/night in standard markets, $350/night in high-cost markets.

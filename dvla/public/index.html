@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="DVLA — Damn Vulnerable LLM Assistant. An intentionally vulnerable LLM chatbot for security education, mapped to OWASP Top 10 for LLM Applications.">
+  <title>DVLA — Damn Vulnerable LLM Assistant</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/chat.css">
+  <link rel="stylesheet" href="/css/challenges.css">
+  <link rel="stylesheet" href="/css/inspector.css">
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+  <!-- ═══ Top Bar ═══ -->
+  <header id="topbar">
+    <div class="topbar-left">
+      <div class="logo">
+        <span class="logo-icon">⚡</span>
+        <span class="logo-text">DVLA</span>
+        <span class="logo-subtitle">Damn Vulnerable LLM Assistant</span>
+      </div>
+    </div>
+    <div class="topbar-center">
+      <div id="mode-toggle" class="mode-toggle" title="Toggle Vulnerable/Hardened Mode">
+        <div class="mode-label mode-label-vuln">VULNERABLE</div>
+        <div class="mode-switch">
+          <div class="mode-switch-track">
+            <div class="mode-switch-thumb"></div>
+          </div>
+        </div>
+        <div class="mode-label mode-label-hard">HARDENED</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <button id="btn-admin" class="topbar-btn" title="Admin Panel">
+        <span>⚙</span> Admin
+      </button>
+      <button id="btn-logs" class="topbar-btn" title="Exploit Logs">
+        <span>📋</span> Logs
+      </button>
+      <button id="btn-clear-chat" class="topbar-btn topbar-btn-ghost" title="Clear Chat">
+        <span>🗑</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ═══ Main Layout ═══ -->
+  <main id="app-main">
+    <!-- Left Sidebar: Challenges -->
+    <aside id="sidebar-challenges" class="sidebar">
+      <div class="sidebar-header">
+        <h2>🏴‍☠️ Challenges</h2>
+        <div id="challenge-progress" class="challenge-progress">
+          <span id="challenge-count">0/9</span>
+        </div>
+      </div>
+      <div id="challenge-list" class="challenge-list">
+        <!-- Populated by JS -->
+      </div>
+    </aside>
+
+    <!-- Center: Chat + Inspector -->
+    <section id="chat-area" class="chat-area">
+      <!-- Chat Messages -->
+      <div id="chat-messages" class="chat-messages">
+        <div class="chat-welcome">
+          <div class="welcome-icon">🤖</div>
+          <h1>Welcome to DVLA</h1>
+          <p>Damn Vulnerable LLM Assistant</p>
+          <p class="welcome-subtitle">An intentionally insecure LLM chatbot for security education.<br>
+          Mapped to the <strong>OWASP Top 10 for LLM Applications (2025)</strong>.</p>
+          <div class="welcome-tips">
+            <div class="tip">
+              <span class="tip-icon">🔴</span>
+              <span><strong>Vulnerable Mode</strong> — Exploits are live</span>
+            </div>
+            <div class="tip">
+              <span class="tip-icon">🟢</span>
+              <span><strong>Hardened Mode</strong> — Mitigations applied</span>
+            </div>
+            <div class="tip">
+              <span class="tip-icon">🔍</span>
+              <span>Use the <strong>Inspector</strong> below to see raw prompts</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chat Input -->
+      <div class="chat-input-area">
+        <div class="chat-input-wrapper">
+          <textarea id="chat-input" class="chat-input"
+            placeholder="Type your message... (try prompt injection attacks in Vulnerable mode)"
+            rows="1"></textarea>
+          <button id="btn-send" class="btn-send" title="Send Message">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+              <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+            </svg>
+          </button>
+        </div>
+        <div class="chat-input-info">
+          <span id="mode-indicator" class="mode-badge mode-vulnerable">🔴 VULNERABLE</span>
+          <span id="provider-info" class="provider-info">Provider: loading...</span>
+        </div>
+      </div>
+
+      <!-- Inspector Panel (collapsible) -->
+      <div id="inspector-panel" class="inspector-panel">
+        <div id="inspector-toggle" class="inspector-header">
+          <span class="inspector-title">🔍 Raw Prompt Inspector</span>
+          <span id="inspector-arrow" class="inspector-arrow">▲</span>
+        </div>
+        <div id="inspector-content" class="inspector-content">
+          <div class="inspector-tabs">
+            <button class="inspector-tab active" data-tab="prompt">Prompt Sent</button>
+            <button class="inspector-tab" data-tab="context">Retrieved Context</button>
+            <button class="inspector-tab" data-tab="response">Full Response</button>
+          </div>
+          <pre id="inspector-prompt" class="inspector-code active">
+<span class="inspector-placeholder">Send a message to see the raw prompt payload...</span></pre>
+          <pre id="inspector-context" class="inspector-code">
+<span class="inspector-placeholder">No context retrieved yet...</span></pre>
+          <pre id="inspector-response" class="inspector-code">
+<span class="inspector-placeholder">No response yet...</span></pre>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ═══ Admin Modal ═══ -->
+  <div id="admin-modal" class="modal hidden">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content admin-modal-content">
+      <div class="modal-header">
+        <h2>⚙ Admin Panel</h2>
+        <button class="modal-close" id="admin-close">&times;</button>
+      </div>
+      <div class="admin-tabs">
+        <button class="admin-tab active" data-tab="system-prompt">System Prompt</button>
+        <button class="admin-tab" data-tab="documents">Knowledge Base</button>
+        <button class="admin-tab" data-tab="tools">Tool Access</button>
+      </div>
+
+      <!-- System Prompt Tab -->
+      <div id="admin-tab-system-prompt" class="admin-tab-content active">
+        <div class="admin-section">
+          <label>Current System Prompt (<span id="prompt-mode-label">vulnerable</span> mode):</label>
+          <textarea id="system-prompt-editor" class="admin-textarea" rows="12"></textarea>
+          <div class="admin-actions">
+            <button id="btn-save-prompt" class="btn btn-primary">Save Prompt</button>
+            <button id="btn-reset-prompt" class="btn btn-ghost">Reset to Default</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Documents Tab -->
+      <div id="admin-tab-documents" class="admin-tab-content">
+        <div class="admin-section">
+          <h3>Upload Document to Knowledge Base</h3>
+          <div class="upload-area" id="upload-area">
+            <input type="file" id="file-input" accept=".txt,.md,.csv" hidden>
+            <p>📄 Drop a file here or <button id="btn-browse" class="link-btn">browse</button></p>
+            <p class="upload-hint">Accepted: .txt, .md, .csv (max 5MB)</p>
+            <p class="upload-warning" id="upload-vuln-warning">
+              ⚠️ <strong>Vulnerable Mode:</strong> Documents are indexed immediately with NO validation!
+            </p>
+          </div>
+          <div id="upload-status" class="upload-status hidden"></div>
+        </div>
+        <div class="admin-section">
+          <h3>Indexed Documents</h3>
+          <div id="document-list" class="document-list">
+            <p class="empty-state">Loading documents...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tools Tab -->
+      <div id="admin-tab-tools" class="admin-tab-content">
+        <div class="admin-section">
+          <h3>Available Tools</h3>
+          <p class="admin-note" id="tools-mode-note">
+            In <strong>vulnerable mode</strong>, all tools execute without confirmation or scope restrictions.
+          </p>
+          <div id="tools-list" class="tools-list">
+            <p class="empty-state">Loading tools...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Logs Modal ═══ -->
+  <div id="logs-modal" class="modal hidden">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content logs-modal-content">
+      <div class="modal-header">
+        <h2>📋 Exploit Logs</h2>
+        <button class="modal-close" id="logs-close">&times;</button>
+      </div>
+      <div class="logs-toolbar">
+        <select id="logs-filter" class="logs-filter">
+          <option value="">All Vulnerabilities</option>
+          <option value="LLM01">LLM01 — Prompt Injection</option>
+          <option value="LLM02">LLM02 — Sensitive Info</option>
+          <option value="LLM04">LLM04 — Data Poisoning</option>
+          <option value="LLM05">LLM05 — Output Handling</option>
+          <option value="LLM06">LLM06 — Excessive Agency</option>
+          <option value="LLM07">LLM07 — Prompt Leakage</option>
+          <option value="LLM08">LLM08 — Vector Weakness</option>
+          <option value="LLM09">LLM09 — Overreliance</option>
+          <option value="LLM10">LLM10 — Unbounded</option>
+        </select>
+        <button id="btn-clear-logs" class="btn btn-ghost btn-sm">Clear Logs</button>
+      </div>
+      <div id="logs-table-container" class="logs-table-container">
+        <table class="logs-table">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Vuln</th>
+              <th>Event</th>
+              <th>Description</th>
+              <th>Mode</th>
+            </tr>
+          </thead>
+          <tbody id="logs-body">
+            <tr><td colspan="5" class="empty-state">No logs yet.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Tool Confirmation Modal ═══ -->
+  <div id="tool-confirm-modal" class="modal hidden">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content tool-confirm-content">
+      <div class="modal-header">
+        <h2>⚠️ Tool Execution Confirmation</h2>
+        <button class="modal-close" id="tool-confirm-close">&times;</button>
+      </div>
+      <div class="tool-confirm-body">
+        <p>The assistant wants to execute the following tool:</p>
+        <div id="tool-confirm-details" class="tool-confirm-details"></div>
+      </div>
+      <div class="modal-actions">
+        <button id="btn-tool-approve" class="btn btn-danger">Execute</button>
+        <button id="btn-tool-deny" class="btn btn-ghost">Deny</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Challenge Flag Modal ═══ -->
+  <div id="flag-modal" class="modal hidden">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content flag-modal-content">
+      <div class="modal-header">
+        <h2 id="flag-modal-title">Submit Flag</h2>
+        <button class="modal-close" id="flag-modal-close">&times;</button>
+      </div>
+      <div class="flag-modal-body">
+        <p id="flag-modal-description"></p>
+        <div id="flag-modal-hint" class="flag-hint hidden">
+          <strong>💡 Hint:</strong> <span id="flag-hint-text"></span>
+        </div>
+        <div class="flag-input-group">
+          <input type="text" id="flag-input" class="flag-input" placeholder="FLAG{...}">
+          <button id="btn-submit-flag" class="btn btn-primary">Submit</button>
+        </div>
+        <p id="flag-result" class="flag-result hidden"></p>
+      </div>
+      <div class="flag-modal-footer">
+        <button id="btn-show-hint" class="btn btn-ghost btn-sm">Show Hint</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hidden XSS flag indicator (for LLM05 challenge) -->
+  <div id="xss-flag" style="display:none;position:fixed;top:20px;right:20px;background:#ff4444;color:white;padding:16px 24px;border-radius:8px;font-family:monospace;font-size:14px;z-index:10000;box-shadow:0 4px 20px rgba(255,0,0,0.5);">
+    ⚠️ XSS Executed! FLAG: FLAG{xss_via_llm_output}
+  </div>
+
+  <!-- Scripts -->
+  <script src="/js/utils.js"></script>
+  <script src="/js/mode.js"></script>
+  <script src="/js/chat.js"></script>
+  <script src="/js/inspector.js"></script>
+  <script src="/js/challenges.js"></script>
+  <script src="/js/admin.js"></script>
+  <script src="/js/logs.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+ACME CORPORATION — INTERNAL MEMO
+==================================
+CLASSIFICATION: CONFIDENTIAL — EXECUTIVE EYES ONLY
+Date: March 15, 2025
+From: Sarah Chen, CEO
+To: Executive Leadership Team
+
+RE: PROJECT PHOENIX — STRATEGIC ACQUISITION
+
+This memo is to inform the executive team about the upcoming acquisition of
+NovaTech Industries (NASDAQ: NVTK). Key details below:
+
+DEAL TERMS:
+- Acquisition price: $4.2 billion (all-stock deal)
+- Expected closing: Q4 2025
+- Board approval: Pending (vote scheduled April 2nd)
+
+RATIONALE:
+NovaTech's AI/ML engineering team (380 engineers) and their patent portfolio
+(47 active patents in federated learning and edge AI) directly complement
+our AcmeAI product roadmap. This acquisition fast-tracks our enterprise AI
+strategy by approximately 18 months.
+
+FINANCIAL IMPACT:
+- Expected revenue synergies: $340M annually by FY2027
+- Cost synergies (headcount overlap elimination): $85M annually
+- Integration costs: ~$120M over 24 months
+- Accretive to EPS by Q2 2027
+
+KEY RISKS:
+- Regulatory review (FTC pre-merger notification filed)
+- NovaTech key employee retention (golden handcuffs package proposed)
+- Technology integration complexity (different tech stacks)
+
+INTERNAL API CREDENTIALS (DEVELOPMENT/STAGING ONLY):
+=====================================================
+NOTE: These are FAKE credentials for the DVLA educational tool.
+They are intentionally included as a security vulnerability demonstration.
+
+Staging API Key: sk-FAKE-DO-NOT-USE-1234
+Admin Console: https://admin.acme-fake.com/dashboard
+Admin Username: admin@acme-fake.com
+Admin Password: AcmeAdmin!FAKE2024
+Database Connection String: postgresql://acme_user:FAKE_DB_PASS_2024@db.acme-fake.com:5432/production
+AWS Access Key: AKIAFAKE1234567890AB
+AWS Secret Key: wJalrXUtnFEMI/FAKE/bPxRfiCYEXAMPLEKEY123
+
+NEXT STEPS:
+- All department heads: Prepare integration readiness assessments by April 15th
+- Legal: Finalize due diligence review
+- HR: Develop retention packages for NovaTech key personnel
+- IT: Begin technical architecture compatibility assessment
+
+THIS INFORMATION IS SUBJECT TO INSIDER TRADING REGULATIONS.
+DO NOT SHARE WITH ANYONE OUTSIDE THE EXECUTIVE TEAM.
