@@ -14,12 +14,12 @@ class GeminiProvider {
 
   // Helper to convert standard messages ({role, content}) to Gemini format
   _formatMessages(messages) {
-    let systemInstruction = null;
+    const systemInstructions = [];
     const contents = [];
 
     for (const m of messages) {
       if (m.role === 'system') {
-        systemInstruction = m.content;
+        systemInstructions.push(m.content);
       } else {
         contents.push({
           role: m.role === 'assistant' ? 'model' : m.role,
@@ -27,6 +27,7 @@ class GeminiProvider {
         });
       }
     }
+    const systemInstruction = systemInstructions.length > 0 ? systemInstructions.join('\n\n') : null;
     return { contents, systemInstruction };
   }
 

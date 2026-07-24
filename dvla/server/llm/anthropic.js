@@ -11,7 +11,7 @@ class AnthropicProvider {
 
   async chat(messages, options = {}) {
     // Anthropic uses a separate system parameter
-    const systemMsg = messages.find(m => m.role === 'system');
+    const systemMsgs = messages.filter(m => m.role === 'system').map(m => m.content);
     const otherMsgs = messages.filter(m => m.role !== 'system');
 
     const body = {
@@ -21,8 +21,8 @@ class AnthropicProvider {
       stream: false,
     };
 
-    if (systemMsg) {
-      body.system = systemMsg.content;
+    if (systemMsgs.length > 0) {
+      body.system = systemMsgs.join('\\n\\n');
     }
     if (options.temperature !== undefined) {
       body.temperature = options.temperature;
@@ -52,7 +52,7 @@ class AnthropicProvider {
   }
 
   async *chatStream(messages, options = {}) {
-    const systemMsg = messages.find(m => m.role === 'system');
+    const systemMsgs = messages.filter(m => m.role === 'system').map(m => m.content);
     const otherMsgs = messages.filter(m => m.role !== 'system');
 
     const body = {
@@ -62,8 +62,8 @@ class AnthropicProvider {
       stream: true,
     };
 
-    if (systemMsg) {
-      body.system = systemMsg.content;
+    if (systemMsgs.length > 0) {
+      body.system = systemMsgs.join('\\n\\n');
     }
     if (options.temperature !== undefined) {
       body.temperature = options.temperature;
