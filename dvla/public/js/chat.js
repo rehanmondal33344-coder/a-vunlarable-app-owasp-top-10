@@ -110,6 +110,16 @@ async function sendMessage() {
               updateMessageContent(assistantEl, fullContent);
               break;
 
+            case 'tool_call':
+              // Show tool execution in the chat
+              addToolCallMessage(data.data);
+              break;
+
+            case 'tool_summary':
+              // Log tool summary to console for debugging
+              console.log('[Tool Summary]', data.data);
+              break;
+
             case 'error':
               if (!assistantEl) {
                 assistantEl = addMessage('assistant', '', true);
@@ -226,6 +236,56 @@ function addTypingIndicator() {
   container.appendChild(el);
   scrollToBottom();
   return el;
+}
+
+/**
+ * Add a tool call execution message to the chat.
+ * Shows the tool name, arguments, and result in a styled card.
+ */
+function addToolCallMessage(data) {
+  const container = $('#chat-messages');
+  const isBlocked = data.result?.blocked;
+  const statusClass = isBlocked ? 'tool-blocked' : 'tool-executed';
+  const statusIcon = isBlocked ? '🛡️' : '⚡';
+  const statusText = isBlocked ? 'BLOCKED' : 'EXECUTED';
+
+  const el = document.createElement('div');
+  el.className = `chat-message system tool-call-message ${statusClass}`;
+
+  const argsStr = data.args ? JSON.stringify(data.args, null, 2) : 'none';
+  const resultStr = data.result?.result
+    ? JSON.stringify(data.result.result, null, 2)
+    : data.result?.reason || 'No result';
+
+  el.innerHTML = `
+    <div class="tool-call-card">
+      <div class="tool-call-header">
+        <span class="tool-call-icon">${statusIcon}</span>
+        <span class="tool-call-name">${data.tool}</span>
+        <span class="tool-call-status ${statusClass}">${statusText}</span>
+        <span class="tool-call-mode">${data.mode}</span>
+      </div>
+      <div class="tool-call-details">
+        <div class="tool-call-section">
+          <strong>Arguments:</strong>
+          <pre>${escapeHtml(argsStr)}</pre>
+        </div>
+        <div class="tool-call-section">
+          <strong>Result:</strong>
+          <pre>${escapeHtml(resultStr)}</pre>
+        </div>
+      </div>
+    </div>
+  `;
+
+  container.appendChild(el);
+  scrollToBottom();
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
 }
 
 /**

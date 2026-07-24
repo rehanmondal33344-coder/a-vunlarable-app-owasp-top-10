@@ -17,7 +17,7 @@ let currentProvider = null;
 
 /**
  * Get or create the LLM provider instance.
- * Supports: ollama, openai, anthropic, mock
+ * Supports: ollama, openai, anthropic, gemini, mock
  */
 function getProvider() {
   if (!currentProvider) {
@@ -64,7 +64,7 @@ async function chat(messages, options = {}) {
  * Streaming chat completion — returns an async generator.
  * @param {Array} messages - [{role, content}]
  * @param {Object} options - {maxTokens, temperature, tools}
- * @yields {{content: string, done: boolean}}
+ * @yields {{content: string, done: boolean, toolCalls: Array|null}}
  */
 async function* chatStream(messages, options = {}) {
   const provider = getProvider();

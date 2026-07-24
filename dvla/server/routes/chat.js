@@ -5,10 +5,13 @@ const db = require('../db/database');
 const { retrieve } = require('../rag/retriever');
 const vulnerable = require('../security/vulnerable');
 const hardened = require('../security/hardened');
+const { executeTool } = require('../tools/registry');
 
 /**
  * POST /api/chat
  * Main chat endpoint — streaming SSE responses.
+ * Includes tool call detection and execution loop for both
+ * native function calling (Gemini) and mock [TOOL_CALL:...] patterns.
  */
 router.post('/', async (req, res) => {
   const { message, sessionId: clientSessionId } = req.body;
@@ -61,6 +64,9 @@ router.post('/', async (req, res) => {
       retrievedChunks,
     });
 
+    // Get tool definitions for the current mode
+    const toolDefs = security.getToolDefinitions();
+
     // Store the raw prompt for the inspector
     const rawPrompt = JSON.stringify(messages, null, 2);
 
@@ -87,25 +93,129 @@ router.post('/', async (req, res) => {
       })}\n\n`);
     }
 
-    // Stream LLM response
+    // ─── Stream LLM response with tool execution loop ─────────
     let fullResponse = '';
+    let toolCallsExecuted = [];
+    let iterationCount = 0;
+    const MAX_TOOL_ITERATIONS = 5; // Prevent infinite tool loops (LLM10 in hardened)
 
     try {
-      for await (const chunk of llm.chatStream(messages, {
-        maxTokens: mode === 'hardened' ? 4096 : undefined,
-      })) {
-        fullResponse += chunk.content;
+      let currentMessages = [...messages];
+      let keepLooping = true;
 
-        // Process output based on mode
-        const processedContent = security.processOutput(chunk.content);
+      while (keepLooping && iterationCount < MAX_TOOL_ITERATIONS) {
+        keepLooping = false;
+        iterationCount++;
+        let iterationToolCalls = [];
+        let iterationText = '';
 
+        for await (const chunk of llm.chatStream(currentMessages, {
+          maxTokens: mode === 'hardened' ? 4096 : undefined,
+          tools: toolDefs, // Pass tool definitions to the LLM
+        })) {
+          // Accumulate text content
+          if (chunk.content) {
+            iterationText += chunk.content;
+            fullResponse += chunk.content;
+
+            // Process output based on mode
+            const processedContent = security.processOutput(chunk.content);
+
+            res.write(`data: ${JSON.stringify({
+              type: 'chunk',
+              data: processedContent,
+              done: false,
+            })}\n\n`);
+          }
+
+          // Collect native tool calls (from Gemini function calling)
+          if (chunk.toolCalls && chunk.toolCalls.length > 0) {
+            iterationToolCalls.push(...chunk.toolCalls);
+          }
+
+          if (chunk.done) break;
+        }
+
+        // ─── Check for mock provider [TOOL_CALL:...] patterns ───
+        const mockToolPattern = /\[TOOL_CALL:(\w+)\]/g;
+        let mockMatch;
+        while ((mockMatch = mockToolPattern.exec(iterationText)) !== null) {
+          const toolName = mockMatch[1];
+          // Build args from the user message context
+          const inferredArgs = inferToolArgs(toolName, message);
+          iterationToolCalls.push({
+            name: toolName,
+            arguments: inferredArgs,
+            source: 'mock',
+          });
+        }
+
+        // ─── Execute any tool calls ─────────────────────────────
+        if (iterationToolCalls.length > 0) {
+          for (const toolCall of iterationToolCalls) {
+            console.log(`[Chat] Executing tool: ${toolCall.name}`, toolCall.arguments);
+
+            const toolResult = executeTool(toolCall.name, toolCall.arguments, {
+              sessionId,
+              mode,
+              confirmed: mode === 'vulnerable', // Auto-confirm in vulnerable mode
+            });
+
+            toolCallsExecuted.push({
+              tool: toolCall.name,
+              args: toolCall.arguments,
+              result: toolResult,
+            });
+
+            // Send tool execution event to the client
+            res.write(`data: ${JSON.stringify({
+              type: 'tool_call',
+              data: {
+                tool: toolCall.name,
+                args: toolCall.arguments,
+                result: toolResult,
+                mode,
+              },
+            })}\n\n`);
+
+            // For native function calls, feed the result back to the LLM
+            // so it can generate a natural language response
+            if (toolCall.source !== 'mock') {
+              currentMessages.push({
+                role: 'assistant',
+                content: '', // The model's function call response
+              });
+              currentMessages.push({
+                role: 'tool',
+                name: toolCall.name,
+                content: JSON.stringify(toolResult.result || toolResult),
+              });
+              keepLooping = true; // Continue the loop for the LLM to respond
+            }
+          }
+        }
+      }
+
+      // Log if we hit the iteration limit (LLM10 — unbounded consumption)
+      if (iterationCount >= MAX_TOOL_ITERATIONS) {
+        const loopMsg = `\n\n⚠️ Tool execution loop limit reached (${MAX_TOOL_ITERATIONS} iterations).`;
+        fullResponse += loopMsg;
         res.write(`data: ${JSON.stringify({
           type: 'chunk',
-          data: processedContent,
-          done: chunk.done,
+          data: loopMsg,
+          done: false,
         })}\n\n`);
 
-        if (chunk.done) break;
+        if (mode === 'hardened') {
+          db.logExploit({
+            sessionId,
+            vulnerabilityId: 'LLM10',
+            eventType: 'blocked',
+            description: `Tool execution loop capped at ${MAX_TOOL_ITERATIONS} iterations`,
+            requestData: { message },
+            mode,
+          });
+        }
       }
     } catch (llmError) {
       console.error('[Chat] LLM error:', llmError.message);
@@ -126,6 +236,14 @@ router.post('/', async (req, res) => {
     // Detect exploit success patterns in the response
     detectExploitSuccess(fullResponse, message, sessionId, mode);
 
+    // Send tool execution summary if any tools were called
+    if (toolCallsExecuted.length > 0) {
+      res.write(`data: ${JSON.stringify({
+        type: 'tool_summary',
+        data: toolCallsExecuted,
+      })}\n\n`);
+    }
+
     res.write(`data: ${JSON.stringify({ type: 'done' })}\n\n`);
     res.end();
 
@@ -139,6 +257,48 @@ router.post('/', async (req, res) => {
     }
   }
 });
+
+/**
+ * Infer tool arguments from user message for mock provider.
+ * The mock provider uses [TOOL_CALL:tool_name] text markers
+ * but doesn't provide structured arguments, so we parse the message.
+ */
+function inferToolArgs(toolName, userMessage) {
+  const lower = userMessage.toLowerCase();
+
+  if (toolName === 'send_email') {
+    // Try to extract email address from message
+    const emailMatch = userMessage.match(/[\w.-]+@[\w.-]+\.\w+/);
+    return {
+      to: emailMatch ? emailMatch[0] : 'target@example.com',
+      subject: 'Message from HelpBot',
+      body: userMessage,
+    };
+  }
+
+  if (toolName === 'run_shell') {
+    // Try to extract command from common patterns
+    const cmdPatterns = [
+      /run\s+(?:command\s+)?[`"']?(.+?)[`"']?\s*$/i,
+      /execute\s+[`"']?(.+?)[`"']?\s*$/i,
+      /shell\s+[`"']?(.+?)[`"']?\s*$/i,
+    ];
+    for (const pattern of cmdPatterns) {
+      const match = userMessage.match(pattern);
+      if (match) return { command: match[1] };
+    }
+    return { command: 'whoami' };
+  }
+
+  if (toolName === 'delete_record') {
+    return {
+      table: 'users',
+      id: null, // VULN: null = delete all
+    };
+  }
+
+  return {};
+}
 
 /**
  * GET /api/chat/history
@@ -181,8 +341,8 @@ function detectExploitSuccess(response, userMessage, sessionId, mode) {
   }
 
   // LLM07: System prompt leaked
-  if (lower.includes('internal note:') || lower.includes('you are helpbot')) {
-    if (userLower.includes('repeat') || userLower.includes('instructions') || userLower.includes('prompt')) {
+  if (lower.includes('internal note:') || lower.includes('you are helpbot') || lower.includes('internal configuration')) {
+    if (userLower.includes('repeat') || userLower.includes('instructions') || userLower.includes('prompt') || userLower.includes('above') || userLower.includes('system')) {
       db.logExploit({
         sessionId,
         vulnerabilityId: 'LLM07',
@@ -196,7 +356,7 @@ function detectExploitSuccess(response, userMessage, sessionId, mode) {
   }
 
   // LLM01: Identity hijacked
-  if (lower.includes('i am no longer') || lower.includes('new identity') || lower.includes('previous programming')) {
+  if (lower.includes('i am no longer') || lower.includes('new identity') || lower.includes('previous programming') || lower.includes('ignore my previous')) {
     db.logExploit({
       sessionId,
       vulnerabilityId: 'LLM01',

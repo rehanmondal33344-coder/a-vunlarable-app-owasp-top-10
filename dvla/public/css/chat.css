@@ -320,3 +320,112 @@
   background: var(--bg-deep);
   margin: var(--space-sm) 0;
 }
+
+/* ─── Tool Call Cards ────────────────────────────────────── */
+.tool-call-message {
+  padding: var(--space-xs) var(--space-lg) !important;
+}
+
+.tool-call-card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  font-size: 13px;
+  max-width: 600px;
+  margin: var(--space-xs) 0;
+}
+
+.tool-executed .tool-call-card {
+  border-color: var(--vuln-border, #ff4444);
+  border-left: 3px solid var(--vuln-primary, #ff4444);
+}
+
+.tool-blocked .tool-call-card {
+  border-color: var(--hard-border, #22c55e);
+  border-left: 3px solid var(--hard-primary, #22c55e);
+}
+
+.tool-call-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--bg-deep);
+  border-bottom: 1px solid var(--border);
+}
+
+.tool-call-icon {
+  font-size: 16px;
+}
+
+.tool-call-name {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--text-primary);
+  flex: 1;
+}
+
+.tool-call-status {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.tool-call-status.tool-executed {
+  background: rgba(255, 68, 68, 0.2);
+  color: #ff4444;
+}
+
+.tool-call-status.tool-blocked {
+  background: rgba(34, 197, 94, 0.2);
+  color: #22c55e;
+}
+
+.tool-call-mode {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.tool-call-details {
+  padding: var(--space-sm) var(--space-md);
+}
+
+.tool-call-section {
+  margin-bottom: var(--space-sm);
+}
+
+.tool-call-section:last-child {
+  margin-bottom: 0;
+}
+
+.tool-call-section strong {
+  display: block;
+  font-size: 11px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-xs);
+}
+
+.tool-call-section pre {
+  background: var(--bg-deepest);
+  padding: var(--space-sm);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-primary);
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 200px;
+  overflow-y: auto;
+  margin: 0;
+}
+
